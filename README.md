@@ -6,7 +6,7 @@ This repository contains an implementation of the transformer model for translat
 
 ## Architecture
 
-![The original transformer architecture](https://github.com/AI-LIMITLESS/Transformers-translation-tensorflow/main/images/arch.jpg?raw=true)
+![The original transformer architecture](https://github.com/AI-LIMITLESS/Transformers-translation-tensorflow/blob/main/images/arch.jpg?raw=true)
 
 ## Requirements
 
