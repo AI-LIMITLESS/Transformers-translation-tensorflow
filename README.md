@@ -6,7 +6,7 @@ This repository contains an implementation of the transformer model for translat
 
 ## Architecture
 
-![The original transformer architecture](https://www.researchgate.net/profile/Peter-Vyboch/publication/351838554/figure/fig3/AS:1027266817581062@1621930903988/Architecture-of-an-original-transformer_W640.jpg)
+![The original transformer architecture](https://github.com/AI-LIMITLESS/Transformers-translation-tensorflow/main/images/arch.jpg?raw=true)
 
 ## Requirements
 
@@ -17,4 +17,4 @@ This repository contains an implementation of the transformer model for translat
 > Currently under development
 
 ## References
-Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. In Advances in neural information processing systems (pp. 5998-6008).
+- Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. In Advances in neural information processing systems (pp. 5998-6008).
