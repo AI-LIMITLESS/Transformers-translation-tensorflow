@@ -33,7 +33,7 @@ class SublayerLogic(Layer):
         Args:
             representations_batch (tf.Tensor): A tensor to pass through the sub-layer.
             sub_layer (Layer): A layer to apply to the input tensor.
-
+            
         Returns:
             tf.Tensor: The result of the sub-layer applied to the input tensor added to the input tensor.
         """
