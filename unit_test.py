@@ -2,6 +2,7 @@ from model.positional_encoding import PositionalEncoder
 from model.embedding import TokenEmbedding
 from model.pointwise import PointWiseFeedForwardNetwork
 from model.multi_head_attention import MultiHeadAttention
+from model.sublayerlogic import SublayerLogic
 import tensorflow as tf
 import numpy as np
 import unittest
@@ -70,8 +71,8 @@ class TestMultiHeadAttention(unittest.TestCase):
         self.number_heads = 5
         self.vocab_size = 200
         self.mask = None
-        token_representation_batch = self._generate_synthetic_token_id_representations(B, S, self.vocab_size)
-        self.embedding_batch = self._generate_embeddings(token_representation_batch)
+        token_id_representation_batch = self._generate_synthetic_token_id_representations(B, S, self.vocab_size)
+        self.embedding_batch = self._generate_encoding(token_id_representation_batch)
         
     def _generate_synthetic_token_id_representations(self, batch_size, sequence_length, vocab_size):
         """Generates synthetic token id representations """
@@ -81,9 +82,10 @@ class TestMultiHeadAttention(unittest.TestCase):
                                 maxval=vocab_size-1,
                                 dtype=tf.dtypes.float32
                                 )
-    def _generate_embeddings(self, token_representations):
+    def _generate_encoding(self, token_id_representations):
+        """Generates encoding (Embedding + positional encoding) from token id representations"""
         embedding = TokenEmbedding(self.vocab_size, self.model_dimension)
-        x = embedding(token_representations)
+        x = embedding(token_id_representations)
         positional_encoder = PositionalEncoder(self.model_dimension, dropout_probability=0.1, max_length=10)
         x = positional_encoder(x)
         return x
@@ -97,6 +99,27 @@ class TestMultiHeadAttention(unittest.TestCase):
                                     mask = None)
         self.assertEqual(output.shape, self.embedding_batch.shape)
 
+class TestSubLayerLogic(unittest.TestCase):
+    """ Unit tests for the sublayer logic """
+    
+    def __init__(self):
+        super().__init__()
+        testMHA = TestMultiHeadAttention()
+        self.model_dimension = testMHA.model_dimension
+        self.embedding_batch = testMHA.embedding_batch
+        self.number_heads = testMHA.number_heads 
+        multiHeadAttention = MultiHeadAttention(self.model_dimension, self.number_heads, dropout_probability = 0.1)
+        self.sublayer_self_attention = lambda representation_batch: multiHeadAttention(query = representation_batch,
+                                                                   key = representation_batch,
+                                                                   value = representation_batch, 
+                                                                   mask = None)
+    def test_output_shape(self):
+        """ Test the output shape of the TestSubLayerLogic class"""
+        sublayerLogic = SublayerLogic(self.model_dimension, dropout=0.1)
+        output = sublayerLogic(self.embedding_batch, self.sublayer_self_attention)
+        expected = self.embedding_batch.shape
+        self.assertEqual(output.shape, expected)
+        
 # POSITION ENCODING TEST
 test_positional_encoding = TestPositionalEncoding()
 test_positional_encoding.test_output_shape()
@@ -112,6 +135,10 @@ test_pointwise.test_output_shape()
 # MULTIHEADATTENTION TEST
 test_multi_head_attention = TestMultiHeadAttention() 
 test_multi_head_attention.test_output_shape()
+
+# SUBLAYERLOGIC (residual + layer norm) TEST
+test_sublayer_logic = TestSubLayerLogic()
+test_sublayer_logic.test_output_shape()
 
 # ALL GOOD
 print(' ALL GOOD |'*100)
