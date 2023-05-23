@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Layer
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Input
 
 
 class PointWiseFeedForwardNetwork(Layer):
@@ -23,11 +23,13 @@ class PointWiseFeedForwardNetwork(Layer):
             dropout (float, optional): The rate of dropout regularization applied to the output of the first dense layer.
         """
         super().__init__()
-        self.layers = [
-             Dense(model_dimension * width_mul, activation='relu', input_shape=model_dimension),
-             Dropout(dropout),
-             Dense(model_dimension)
-         ]
+        self.layers = tf.keras.Sequential(
+            [
+                Dense(model_dimension * width_mul, activation='relu'),
+                Dropout(dropout),
+                Dense(model_dimension)
+            ]
+        )
     
     def call(self, representations_batch):
         """

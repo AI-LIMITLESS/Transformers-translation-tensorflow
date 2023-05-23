@@ -2,7 +2,7 @@ import math
 import tensorflow as tf
 from tensorflow.keras.layers import Layer, Embedding
 
-class Embedding(Layer):
+class TokenEmbedding(Layer):
     """
     A layer that creates embeddings for token IDs.
 
