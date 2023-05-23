@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Layer, Dense, Dropout
 
-class MultiHeadedAttention(Layer):
+class MultiHeadAttention(Layer):
     """
     A multi-headed attention layer for transformer models.
     
@@ -25,11 +25,11 @@ class MultiHeadedAttention(Layer):
         super().__init__()
         assert model_dimension % number_heads == 0, f'Model dimension must be divisible by the number of heads.'
         
-        self.head_dimension = int(model_dimension / number_heads)
+        self.head_dimension = tf.cast(int(model_dimension / number_heads), dtype=tf.float32)
         self.number_heads = number_heads
         
-        self.qkv_nets = [Dense(model_dimension, model_dimension) for _ in range(3)]
-        self.out_projection_net = Dense(model_dimension, model_dimension)
+        self.qkv_nets = [Dense(model_dimension) for _ in range(3)]
+        self.out_projection_net = Dense(model_dimension)
        
         self.attention_dropout = Dropout(rate = dropout_probability)
         
@@ -56,7 +56,7 @@ class MultiHeadedAttention(Layer):
         token_representations = tf.matmul(attention_weights, value)
         return token_representations
     
-    def forward(self, query, key, value, mask):
+    def call(self, query, key, value, mask):
         """
         Performs the forward pass for the multi-headed attention layer.
 
