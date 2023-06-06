@@ -1,9 +1,9 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Layer, LayerNormalization
+import copy
 from .pointwise import PointWiseFeedForwardNetwork
 from .multi_head_attention import MultiHeadedAttention
 from .sublayerlogic import SublayerLogic
-
 
 class Encoder(Layer):
     """
@@ -25,7 +25,7 @@ class Encoder(Layer):
         """
         super().__init__()
         assert isinstance(encoder_layer, EncoderLayer), f"First input should be of type EncoderLayer instead of {type(encoder_layer)}"
-        self.encoder_layers = [encoder_layer for _ in range(number_of_layers)]
+        self.encoder_layers = [copy.deepcopy(encoder_layer) for _ in range(number_of_layers)]
         self.norm = LayerNormalization(encoder_layer.model_dimension)
 
     def call(self, src_embedding_batch, src_mask):

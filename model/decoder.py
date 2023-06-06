@@ -26,7 +26,7 @@ class Decoder(Layer):
         """
         super().__init__()
         assert isinstance(decoder_layer, DecoderLayer), f"First input should be of type DecoderLayer instead of {type(decoder_layer)}"
-        self.decoder_layers = [decoder_layer for _ in range(number_of_layers)]
+        self.decoder_layers = [copy.deepcopy(decoder_layer) for _ in range(number_of_layers)]
         self.norm = LayerNormalization(decoder_layer.model_dimension)
 
     def call(self, trg_embedding_batch, src_representation_batch, trg_mask, src_mask):
@@ -80,7 +80,7 @@ class DecoderLayer(Layer):
         self.pointwise_nn = pointwise_nn
         self.model_dimension = model_dimension
 
-    def call(self, trg_representation_batch, src_representation_batch, trg_mask, src_mask):
+    def call(self, src_representation_batch, trg_representation_batch, src_mask, trg_mask):
         """
         Performs the forward pass of the DecoderLayer.
 

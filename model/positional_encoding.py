@@ -11,7 +11,7 @@ class PositionalEncoder(Layer):
         positional_encodings_table (tf.Variable): A table containing the sinusoidal positional encodings for each position in a sequence.
 
     """
-    def __init__(self, model_dimension: int, dropout_probability: float, max_length: int) -> None:
+    def __init__(self, model_dimension: int, dropout_probability: float, max_seq_length: int) -> None:
         """
         Initializes the positional encoding layer.
 
@@ -24,12 +24,12 @@ class PositionalEncoder(Layer):
         super().__init__()
         self.dropout = Dropout(rate=dropout_probability)
 
-        position_id = tf.range(0, max_length, dtype=tf.float32)
+        position_id = tf.range(0, max_seq_length, dtype=tf.float32)
         position_id = tf.expand_dims(position_id, axis=1)
 
         frequencies = (1 / tf.math.pow(10000, tf.range(0, model_dimension, 2, dtype=tf.float32))) / model_dimension
 
-        self.positional_encodings_table = tf.Variable(tf.zeros([max_length, model_dimension]))
+        self.positional_encodings_table = tf.Variable(tf.zeros([max_seq_length, model_dimension]))
         self.positional_encodings_table[:, 0::2].assign(tf.sin(position_id*frequencies))
         self.positional_encodings_table[:, 1::2].assign(tf.cos(position_id*frequencies))
 

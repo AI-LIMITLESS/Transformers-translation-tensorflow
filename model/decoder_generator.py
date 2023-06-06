@@ -23,4 +23,4 @@ class DecoderGenerator(Layer):
         Returns:
             tf.Tensor: The output tensor of the network of next token prediction for every token. It has shape (B, S, vocab_size).
         """
-        return tf.nn.softmax(self.linear(representations_batch), axis=-1)        
+        return tf.nn.log_softmax(self.linear(representations_batch), axis=-1)        
