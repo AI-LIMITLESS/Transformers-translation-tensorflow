@@ -28,7 +28,7 @@ The repository is organized as follows:
 │   ├── img/  
 │   │   └── arch.jpg  
 ├── models/  
-│   ├── __init__.py  
+│   ├── \_\_init\_\_.py  
 │   ├── embedding.py  
 │   ├── positional_encoding.py  
 │   ├── pointwise.py  
