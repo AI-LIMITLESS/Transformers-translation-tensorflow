@@ -31,7 +31,7 @@ class Transformer(Layer):
         number_heads: int,
         number_layers: int,
         dropout_probability: float,
-        max_seq_length: int = 500,
+        max_seq_length: int,
     ) -> None:
         """
         Initializes the Transformer model.
@@ -78,8 +78,8 @@ class Transformer(Layer):
         Args:
             src_token_ids_batch (tf.tensor): A tensor of shape (batch_size, sequence_length) containing token IDs for each token in the src batch.
             trg_token_ids_batch (tf.tensor): A tensor of shape (batch_size, sequence_length) containing token IDs for each token in the trg batch.
-            src_mask (tf.tensor): src input mask tensor with shape (batch_size, number_heads, sequence_length) where False indicates that the corresponding element should be masked out.
-            trg_mask (tf.tensor): trg input mask tensor with shape (batch_size, number_heads, sequence_length)
+            src_mask (tf.tensor): src input mask tensor with shape (batch_size, sequence_length) where False indicates that the corresponding element should be masked out.
+            trg_mask (tf.tensor): trg input mask tensor with shape (batch_size, sequence_length)
         
         Returns:
             tf.tensor: Tensor of size (B, S, V) representing transformer output (log probs through vocab)
@@ -95,7 +95,7 @@ class Transformer(Layer):
 
         Args:
             src_token_ids_batch (tf.tensor): A tensor of shape (batch_size, sequence_length) containing token IDs for each token in the src batch.
-            src_mask (tf.tensor): src input mask tensor with shape (batch_size, number_heads, sequence_length) where False indicates that the corresponding element should be masked out.
+            src_mask (tf.tensor): src input mask tensor with shape (batch_size, sequence_length) where False indicates that the corresponding element should be masked out.
         
         Returns:
             tf.tensor: Tensor of size (B, S, Model dimension) representing encoder output
@@ -115,8 +115,8 @@ class Transformer(Layer):
         Args:
             src_token_ids_batch (tf.tensor): A tensor of shape (batch_size, sequence_length) containing token IDs for each token in the src batch.
             trg_token_ids_batch (tf.tensor): A tensor of shape (batch_size, sequence_length) containing token IDs for each token in the trg batch.
-            src_mask (tf.tensor): src input mask tensor with shape (batch_size, number_heads, sequence_length) where False indicates that the corresponding element should be masked out.
-            trg_mask (tf.tensor): trg input mask tensor with shape (batch_size, number_heads, sequence_length)
+            src_mask (tf.tensor): src input mask tensor with shape (batch_size, sequence_length) where False indicates that the corresponding element should be masked out.
+            trg_mask (tf.tensor): trg input mask tensor with shape (batch_size, sequence_length)
         
         Returns:
             tf.tensor: Tensor of size (B*S, Target Vocabulary size) representing decoder generator output
