@@ -110,8 +110,8 @@ def create_text_vectorizers() -> tuple:
         Tuple of textVectorizers respectively on src and trg
 
     """
-    input_text_processor = tf.keras.layers.TextVectorization(standardize=tf_lower_and_split_punct,
+    src_text_processor = tf.keras.layers.TextVectorization(standardize=tf_lower_and_split_punct,
                                                              max_tokens=config.VOCAB_SIZE)
-    output_text_processor = tf.keras.layers.TextVectorization(standardize=tf_lower_and_split_punct,
+    trg_text_processor = tf.keras.layers.TextVectorization(standardize=tf_lower_and_split_punct,
                                                               max_tokens=config.VOCAB_SIZE)
-    return input_text_processor, output_text_processor
+    return src_text_processor, trg_text_processor

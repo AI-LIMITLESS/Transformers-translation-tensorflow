@@ -11,6 +11,7 @@ MAX_SEQ_LENGTH = 500
 
 # Training parameters
 BATCH_SIZE = 64
+EPOCHS = 20
 
 # Adam optimizer parameters
 BETA_1 = 0.9

@@ -52,57 +52,6 @@ def custom_optimizer():
     )
     return optimizer
 
-# Loss function ----------------------------------------------------------------------------------
-def loss_function(real, pred):
-    """
-    Calculate the loss function: Currently Categorical Cross entropy. Ignores padding.
-
-    Args:
-        real (tf.Tensor): The true labels.
-        pred (tf.Tensor): The predicted logits.
-
-    Returns:
-        tf.Tensor: The loss value.
-    """
-    # Currently using sparse categorical crossentropy
-    loss_func = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
-    # Creating mask padding
-    mask = tf.math.logical_not(tf.math.equal(real, 0))
-    # Calculating loss
-    loss = loss_func(real, pred)
-    # Casting mask to loss dtype
-    mask = tf.cast(mask, dtype=loss.dtype)
-    # Multiplying loss by mask
-    loss *= mask
-    # Sum over non-masked elements normalized by their number
-    loss = tf.reduce_sum(loss) / tf.reduce_sum(mask)
-    return loss
-
-# Accuracy function -------------------------------------------------------------------------------
-def accuracy_function(real, pred):
-    """
-    Calculate the accuracy function. Ignore padding.
-
-    Args:
-        real (tf.Tensor): The true labels.
-        pred (tf.Tensor): The predicted logits.
-
-    Returns:
-        tf.Tensor: The accuracy value.
-    """
-    # Accuracies calculation
-    accuracies = tf.equal(real, tf.argmax(pred, axis=2))
-    # Mask calculation
-    mask = tf.math.logical_not(tf.math.equal(real, 0))
-    # Applying mask on accuracies
-    accuracies = tf.math.logical_and(mask, accuracies)
-    # Casting data
-    accuracies = tf.cast(accuracies, dtype=tf.float32)
-    mask = tf.cast(mask, dtype=tf.float32)
-    # Sum over accuracies normalized by non-masked elements
-    accuracy = tf.reduce_sum(accuracies) / tf.reduce_sum(mask)
-    return accuracy
-
 # LOSS + ACCURACY Metrics --------------------------------------------------------------------------
 def create_metrics() -> tuple:
     """
@@ -117,6 +66,59 @@ def create_metrics() -> tuple:
     train_loss = tf.keras.metrics.Mean(name='train_loss')
     train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
     return train_loss, train_accuracy
+
+# SRC & TARGET masks ----------------------------------------------------------------------------------------
+def create_padding_mask(seq):
+    """
+    Create a padding mask for the input sequence.
+
+    Args:
+        seq: Tensor, input sequence.
+
+    Returns:
+        Tensor: Padding mask tensor with shape (batch_size, 1, 1, seq_len).
+
+    """
+    seq = tf.cast(tf.math.equal(seq, 0), tf.float32)
+    return seq[:, tf.newaxis, tf.newaxis, :]
+
+
+def create_look_ahead_mask(seq_length):
+    """
+    Create a look-ahead mask for the decoder.
+
+    Args:
+        seq_length: int, length of the sequence.
+
+    Returns:
+        Tensor: Look-ahead mask tensor with shape (seq_len, seq_len).
+
+    """
+    mask = 1 - tf.linalg.band_part(tf.ones((seq_length, seq_length)), -1, 0)
+    return mask
+
+
+def create_masks(src, trg):
+    """
+    Create masks for the encoder and decoder inputs.
+
+    Args:
+        src: Tensor, source input sequence.
+        trg: Tensor, target input sequence.
+
+    Returns:
+        Tuple[Tensor, Tensor]: Source mask and target mask.
+
+    """
+    # Encoder padding mask
+    src_mask = create_padding_mask(src)
+    # Decoder padding mask
+    trg_padding_mask = create_padding_mask(trg)
+    # Decoder look ahead mask
+    trg_look_ahead_mask = create_look_ahead_mask(tf.shape(trg)[1])
+    # Decoder mask (joining padding + lookahead)
+    trg_mask = tf.maximum(trg_padding_mask, trg_look_ahead_mask)
+    return src_mask, trg_mask
 
 # Transformer instantiation ------------------------------------------------------------------------
 def create_transformer() -> Transformer:
